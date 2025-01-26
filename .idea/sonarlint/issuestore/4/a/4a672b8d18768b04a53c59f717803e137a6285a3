@@ -1,0 +1,7 @@
+
+R
+java:S2589a"7Remove this expression which always evaluates to "true"(ΐρ­ΰψÿÿÿÿ
+X
+java:S1854"=Remove this useless assignment to local variable "qualifier".(Ι»λύÿÿÿÿ
+I
+java:S1481".Remove this unused "qualifier" local variable.(Ι»λύÿÿÿÿ

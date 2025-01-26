@@ -1,0 +1,16 @@
+
+Y
+java:S2589U"7Remove this expression which always evaluates to "true"(¯íç‹úÿÿÿÿ8°˜¼·Å2
+Y
+java:S2589g"7Remove this expression which always evaluates to "true"(¯íç‹úÿÿÿÿ8°˜¼·Å2
+\
+java:S1118	":Add a private constructor to hide the implicit public one.(á¶€¼øÿÿÿÿ8³˜¼·Å2
+X	java:S125"<This block of commented-out lines of code should be removed.(»Ò¾Î8µ˜¼·Å2
+o
+java:S3776e"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(ÿ¸Íÿ8¾˜¼·Å2
+j
+java:S6201j"MReplace this instanceof check and cast with 'instanceof PsiVariable variable'(‹×òý8À˜¼·Å2
+ˆ
+java:S6201z"fReplace this instanceof check and cast with 'instanceof PsiReferenceExpression psireferenceexpression'(Žú×ëøÿÿÿÿ8Â˜¼·Å2
+U
+java:S1144e"8Remove this unused private "isDynamicEncryption" method.(ÿ¸Íÿ8Ã˜¼·Å2

@@ -1,0 +1,11 @@
+
+v
+java:S1450"YRemove the "resultTree" field and declare it as a local variable in the relevant methods.(øßƒ8Õ¦»Å2
+l
+java:S62010"JReplace this instanceof check and cast with 'instanceof ScanResult result'(‚à»—ÿÿÿÿÿ8Ü¦»Å2
+X
+java:S2696S"6Make the enclosing method "static" or remove this set.(ñõîÙşÿÿÿÿ8ä¦»Å2
+P
+java:S1874›"2Remove this use of "getBaseDir"; it is deprecated.(î–¿à8ï¦»Å2
+p
+java:S1128"NRemove this unused import 'com.intellij.openapi.fileEditor.FileEditorManager'.(ãşûšÿÿÿÿÿ8ó¦»Å2

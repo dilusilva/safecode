@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1001,
+    "Rule": "Security Rule",
+    "Compliance": "Encryption - Data at Rest",
+    "ShortDescription": "Encrypt sensitive data stored in databases",
+    "DetailedDescription": "Ensure sensitive data is encrypted at rest using strong encryption algorithms like AES-256 to prevent unauthorized access to database files.",
+    "Recommendation": "Use Jasypt or database-native encryption mechanisms to secure sensitive fields in the database."
+  },
+  {
+    "id": 1002,
+    "Rule": "Security Rule",
+    "Compliance": "Encryption - Data in Transit",
+    "ShortDescription": "Encrypt sensitive data during transmission",
+    "DetailedDescription": "Use secure communication protocols like TLS to encrypt data transmitted over the network, ensuring data integrity and confidentiality.",
+    "Recommendation": "Enforce HTTPS with Spring Security and configure TLS 1.2 or higher for all communication endpoints."
+  },
+  {
+    "id": 1003,
+    "Rule": "Security Rule",
+    "Compliance": "Access Controls",
+    "ShortDescription": "Restrict access to authorized users",
+    "DetailedDescription": "Implement role-based access control (RBAC) to restrict sensitive data access based on user roles and ensure secure authentication.",
+    "Recommendation": "Configure Spring Security with roles and permissions and use JWT tokens for user sessions."
+  },
+  {
+    "id": 1004,
+    "Rule": "Security Rule",
+    "Compliance": "Audit Logs",
+    "ShortDescription": "Log access to sensitive data",
+    "DetailedDescription": "Maintain detailed logs for all access and modifications to sensitive data for monitoring and compliance purposes.",
+    "Recommendation": "Use Hibernate Envers for database auditing and log user activities with a custom logging mechanism."
+  },
+  {
+    "id": 1005,
+    "Rule": "Privacy Rule",
+    "Compliance": "Data Minimization",
+    "ShortDescription": "Expose only necessary data",
+    "DetailedDescription": "Limit the amount of sensitive data exposed in API responses and avoid including unnecessary fields in logs.",
+    "Recommendation": "Create DTOs for API responses and filter logs to include only relevant information."
+  },
+  {
+    "id": 1006,
+    "Rule": "Privacy Rule",
+    "Compliance": "Authorization Checks",
+    "ShortDescription": "Enforce strict user-specific access",
+    "DetailedDescription": "Ensure that users can only access data they are authorized to view by implementing strong authorization mechanisms.",
+    "Recommendation": "Use Spring Security to enforce user-based authorization checks and validate user permissions for every API call."
+  }
+]

@@ -1,0 +1,44 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>org.example.safecode</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>safecode</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+  <vendor email="safecode@gmail.com" url="https://www.yourcompany.com">SafeCode</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+Test<br>
+<em>most HTML tags may be used</em>
+]]></description>
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection language="java" shortName="SoutDetector" groupName="Java"
+                         displayName="System.out.println Detector"
+                         implementationClass="org.example.safecode.SoutDetectorInspection"/>
+        <toolWindow id="SafeCode Plugin Results" anchor="bottom"
+                    factoryClass="org.example.safecode.ui.PluginToolWindow"/>
+    </extensions>
+
+    <actions>
+        <action id="org.example.safecode.actions.ScanWithSafeCodeAction" class="org.example.safecode.actions.ScanWithSafeCodeAction"
+                text="Scan with SafeCode">
+            <add-to-group group-id="FileMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
