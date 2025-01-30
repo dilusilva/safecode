@@ -14,8 +14,8 @@ public class IndustryComplianceChecker {
 
     public IndustryComplianceChecker() {
         this.complianceRules = List.of(
-//                new HIPAAComplianceRule(),
-                new PCIDSSComplianceRule()
+                new HIPAAComplianceRule()
+//                new PCIDSSComplianceRule()
 
         );
     }

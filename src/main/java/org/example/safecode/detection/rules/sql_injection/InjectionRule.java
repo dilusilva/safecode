@@ -29,33 +29,57 @@ public class InjectionRule extends BaseRule {
     private final StoredProcedureDetector storedProcedureDetector = new StoredProcedureDetector();
     private final ConcatenatedQueryDetector concatenatedQueryDetector = new ConcatenatedQueryDetector();
 
+
     @Override
     public List<ScanResult> scan(PsiFile psiFile) {
         List<ScanResult> results = new ArrayList<>();
-        String filePath = psiFile.getVirtualFile().getPath();
+//        ConcatenatedSQLQueryDetector concatenatedSQLDetector = new ConcatenatedSQLQueryDetector();
 
         psiFile.accept(new JavaRecursiveElementVisitor() {
             @Override
-            public void visitMethodCallExpression(PsiMethodCallExpression expression) {
-                super.visitMethodCallExpression(expression);
-                processMethodCall(expression, results, filePath);
-            }
+            public void visitMethod(PsiMethod method) {
+                super.visitMethod(method);
 
-            @Override
-            public void visitAnnotation(PsiAnnotation annotation) {
-                super.visitAnnotation(annotation);
-                nativeQueryDetector.detectVulnerableNativeQuery(annotation, results, filePath);
-            }
+                // Detect concatenated SQL queries
+                List<ScanResult> sqlInjectionResults = concatenatedQueryDetector.isConcatenatedQuery(method);
+                results.addAll(sqlInjectionResults);
 
-            @Override
-            public void visitVariable(PsiVariable variable) {
-                super.visitVariable(variable);
-                processVariable(variable, results, filePath);
+                // Detect SQL queries in strings
+                List<ScanResult> sqlStringResults = dynamicQueryDetector.detectDynamicSQLStrings(method);
+                results.addAll(sqlStringResults);
             }
         });
 
         return results;
     }
+
+//    @Override
+//    public List<ScanResult> scan(PsiFile psiFile) {
+//        List<ScanResult> results = new ArrayList<>();
+//        String filePath = psiFile.getVirtualFile().getPath();
+//
+//        psiFile.accept(new JavaRecursiveElementVisitor() {
+//            @Override
+//            public void visitMethodCallExpression(PsiMethodCallExpression expression) {
+//                super.visitMethodCallExpression(expression);
+//                processMethodCall(expression, results, filePath);
+//            }
+//
+//            @Override
+//            public void visitAnnotation(PsiAnnotation annotation) {
+//                super.visitAnnotation(annotation);
+//                nativeQueryDetector.detectVulnerableNativeQuery(annotation, results, filePath);
+//            }
+//
+//            @Override
+//            public void visitVariable(PsiVariable variable) {
+//                super.visitVariable(variable);
+//                processVariable(variable, results, filePath);
+//            }
+//        });
+//
+//        return results;
+//    }
 
     private void processMethodCall(PsiMethodCallExpression expression, List<ScanResult> results, String filePath) {
         PsiReferenceExpression methodExpression = expression.getMethodExpression();
@@ -97,11 +121,11 @@ public class InjectionRule extends BaseRule {
             PsiExpression initializer = variable.getInitializer();
             if (initializer instanceof PsiBinaryExpression) {
                 PsiBinaryExpression binary = (PsiBinaryExpression) initializer;
-                if (concatenatedQueryDetector.isConcatenatedQuery(binary)) {
-                    addScanResult(results, "103",
-                            "Potential SQL Injection due to dynamic query construction in variable '" + variable.getName() + "'",
-                            getLineNumber(variable), filePath);
-                }
+//                if (concatenatedQueryDetector.detectConcatenatedSQLQueries(binary)) {
+//                    addScanResult(results, "103",
+//                            "Potential SQL Injection due to dynamic query construction in variable '" + variable.getName() + "'",
+//                            getLineNumber(variable), filePath);
+//                }
             }
         }
     }

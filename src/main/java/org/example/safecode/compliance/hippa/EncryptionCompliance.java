@@ -8,29 +8,34 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class EncryptionCompliance {
-    private static final Set<String> PHI_KEYWORDS = Set.of(
-            "FullName", "FirstName", "LastName", "MiddleName", "FName", "LName", "MName",
-            "SocialSecurityNumber", "SSN", "MedicalRecordNumber", "MRN",
-            "HealthInsurancePolicy", "SubscriberNumber", "PolicyNumber",
-            "DateofBirth", "DOB", "BirthDate", "BirthDay",
-            "Address", "HomeAddress", "MailingAddress", "PhoneNumber", "MobileNumber", "EmailAddress",
-            "LabTestResults", "TestResults", "LabResults", "Diagnoses", "MedicalConditions",
-            "PatientID", "PatientIdentifier", "InsuranceID", "InsuranceIdentifier,patient"
-    );
 
-    private static final Pattern PHI_METHOD_NAME_PATTERN = Pattern.compile(
-            ".*(" + String.join("|", PHI_KEYWORDS) + ").*", Pattern.CASE_INSENSITIVE
-    );
+        private static final Set<String> PHI_KEYWORDS = Set.of(
+                "FullName", "FirstName", "LastName", "MiddleName", "FName", "LName", "MName",
+                "SocialSecurityNumber", "SSN", "MedicalRecordNumber", "MRN",
+                "HealthInsurancePolicy", "SubscriberNumber", "PolicyNumber",
+                "DateofBirth", "DOB", "BirthDate", "BirthDay",
+                "Address", "HomeAddress", "MailingAddress", "PhoneNumber", "MobileNumber", "EmailAddress",
+                "LabTestResults", "TestResults", "LabResults", "Diagnoses", "MedicalConditions",
+                "PatientID", "PatientIdentifier", "InsuranceID", "InsuranceIdentifier",
+                "Patient", "Record", "Clinical", "Medical", "Doctor", "Nurse", "Prescription",
+                "Treatment", "Healthcare", "Diagnosis", "Hospital", "Coverage", "Emergency"
+        );
 
-    /**
-     * Checks if the given method name contains PHI-related keywords.
-     *
-     * @param methodName The method name to analyze.
-     * @return true if the method name contains PHI-related keywords, false otherwise.
-     */
-    public static boolean isPHIMethodName(String methodName) {
-        return PHI_METHOD_NAME_PATTERN.matcher(methodName).matches();
-    }
+        private static final Pattern PHI_METHOD_NAME_PATTERN = Pattern.compile(
+                ".*(" + String.join("|", PHI_KEYWORDS) + ").*", Pattern.CASE_INSENSITIVE
+        );
+
+        /**
+         * Checks if the given method name contains PHI-related keywords.
+         *
+         * @param methodName The method name to analyze.
+         * @return true if the method name contains PHI-related keywords, false otherwise.
+         */
+        public static boolean isPHIMethodName(String methodName) {
+            boolean matches = PHI_METHOD_NAME_PATTERN.matcher(methodName).matches();
+            return matches;
+        }
+
 
     /**
      * Checks if the given method contains data persistence operations.
@@ -65,14 +70,28 @@ public class EncryptionCompliance {
         // Common data persistence methods
         Set<String> dataPersistenceMethods = Set.of("save", "store", "write", "insert", "update");
 
+        // Check if the method name directly matches
         if (dataPersistenceMethods.contains(methodName)) {
             PsiExpression qualifier = methodExpression.getQualifierExpression();
             if (qualifier != null && qualifier.getType() != null) {
                 String className = qualifier.getType().getCanonicalText();
-                // Check if the class is related to data storage
-                return className.contains("Repository") || className.contains("Database") || className.contains("Storage");
+                // Ensure it matches typical Spring Data repositories or database-related classes
+                boolean relatedToDataStorage = className.contains("Repository") ||
+                        className.contains("Database") ||
+                        className.contains("Storage") ||
+                        className.contains("JpaRepository") ||
+                        className.contains("CrudRepository") ||
+                        className.contains("MongoRepository");
+                return relatedToDataStorage;
             }
         }
+
+        // Check if the full qualified method call contains ".save"
+        String fullMethodCall = methodExpression.getText(); // e.g., "patientRepository.save"
+        if (fullMethodCall.contains(".save")) {
+            return true;
+        }
+
         return false;
     }
 

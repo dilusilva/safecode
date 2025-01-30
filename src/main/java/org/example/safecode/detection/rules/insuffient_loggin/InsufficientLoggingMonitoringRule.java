@@ -11,71 +11,77 @@ import java.util.List;
 
 public class InsufficientLoggingMonitoringRule extends BaseRule {
     CheckForLoggingStatement checkForLoggingStatement= new CheckForLoggingStatement();
+    CheckForAdminAction checkForAdminAction= new CheckForAdminAction();
+    CheckForSensitiveMethod checkForSensitiveMethod= new CheckForSensitiveMethod();
     @Override
     public List<ScanResult> scan(PsiFile psiFile) {
         List<ScanResult> results = new ArrayList<>();
         String filePath = psiFile.getVirtualFile().getPath();
+        System.out.println("file........ " + filePath);
 
         psiFile.accept(new JavaRecursiveElementVisitor() {
             @Override
-            public void visitMethodCallExpression(PsiMethodCallExpression expression) {
-                super.visitMethodCallExpression(expression);
+            public void visitMethod(PsiMethod method) {
+                super.visitMethod(method);
 
-                String methodName = expression.getMethodExpression().getReferenceName();
+                String methodName = method.getName();
+                System.out.println("Visiting method: " + methodName);
 
-                // 1. Check for lack of security event logging
-                if (isSensitiveMethod(methodName) && !checkForLoggingStatement.hasLoggingStatement(expression)) {
-                    int lineNumber = getLineNumber(expression);
+                // 1. Check for missing audit logs for administrative actions
+                if (checkForAdminAction.isAdministrativeAction(method.getName())) {
+                    if (!checkForLoggingStatement.hasLoggingStatement(method)) {
+                        int lineNumber = getLineNumber(method);
+                        VulnerabilityDefinition definition = VulnerabilityDefinitionLoader.getDefinitionById("519");
+                        results.add(createScanResult(definition, filePath, lineNumber));
+                    }
+                }
+
+                // 2. Check for lack of security event logging
+                if (checkForSensitiveMethod.isSensitiveMethod(methodName) && !checkForLoggingStatement.hasLoggingStatement(method)) {
+                    int lineNumber = getLineNumber(method);
                     VulnerabilityDefinition definition =
                             VulnerabilityDefinitionLoader.getDefinitionById("516");
                     results.add(createScanResult(definition, filePath, lineNumber));
                 }
 
-                // 2. Check for missing exception/error logging
-                if (isCatchBlock(expression) && !hasErrorLogging(expression)) {
-                    int lineNumber = getLineNumber(expression);
-                    VulnerabilityDefinition definition =
-                            VulnerabilityDefinitionLoader.getDefinitionById("517");
-                    results.add(createScanResult(definition, filePath, lineNumber));
-                }
 
-                // 3. Detect insecure logging practices
-                if (checkForLoggingStatement.hasLoggingStatement(expression) && isInsecureLogging(expression)) {
-                    int lineNumber = getLineNumber(expression);
-                    VulnerabilityDefinition definition =
-                            VulnerabilityDefinitionLoader.getDefinitionById("518");
-                    results.add(createScanResult(definition, filePath, lineNumber));
-                }
-                // 4. Missing audit logs for administrative actions
-                if (isAdministrativeAction(expression) && !checkForLoggingStatement.hasLoggingStatement(expression)) {
-                    int lineNumber = getLineNumber(expression);
-                    VulnerabilityDefinition definition = VulnerabilityDefinitionLoader.getDefinitionById("519");
-                    results.add(createScanResult(definition, filePath, lineNumber));
-                }
-            }});
+
+                    // Analyze the method body
+                    PsiCodeBlock body = method.getBody();
+                    if (body != null) {
+                        body.accept(new JavaRecursiveElementVisitor() {
+                            @Override
+                            public void visitMethodCallExpression(PsiMethodCallExpression expression) {
+                                super.visitMethodCallExpression(expression);
+
+                                String callMethodName = expression.getMethodExpression().getReferenceName();
+                                System.out.println("Method call detected: " + callMethodName + ", Full text: " + expression.getText());
+
+                                // 3. Check for missing exception/error logging
+                                if (isCatchBlock(expression) && !checkForLoggingStatement.hasErrorLogging(expression)) {
+                                    int lineNumber = getLineNumber(expression);
+                                    VulnerabilityDefinition definition =
+                                            VulnerabilityDefinitionLoader.getDefinitionById("517");
+                                    results.add(createScanResult(definition, filePath, lineNumber));
+                                }
+
+                                // 4. Detect insecure logging practices
+                                if (checkForLoggingStatement.hasLoggingStatement(expression)
+                                        && checkForLoggingStatement.isInsecureLogging(expression)) {
+                                    int lineNumber = getLineNumber(expression);
+                                    VulnerabilityDefinition definition =
+                                            VulnerabilityDefinitionLoader.getDefinitionById("518");
+                                    results.add(createScanResult(definition, filePath, lineNumber));
+                                }
+
+                            }
+                        });
+                    }
+
+            }
+        });
         return results;
     }
-
-    private boolean isSensitiveMethod(String methodName) {
-        List<String> sensitivePatterns = List.of(
-                ".*login.*", ".*logout.*", ".*changePassword.*", ".*accessSensitiveData.*",
-                ".*viewMedicalRecord.*", ".*updateMedicalRecord.*", ".*deleteMedicalRecord.*",
-                ".*scheduleAppointment.*", ".*cancelAppointment.*", ".*prescribeMedication.*",
-                ".*viewLabResults.*", ".*updateLabResults.*", ".*accessPatientData.*", ".*getPatientData.*",
-                ".*transferFunds.*", ".*viewAccountBalance.*", ".*updateAccountDetails.*",
-                ".*processPayment.*", ".*refundPayment.*", ".*applyForLoan.*",
-                ".*approveLoan.*", ".*rejectLoan.*", ".*viewTransactionHistory.*",
-                ".*downloadStatement.*", ".*updateCreditCardInfo.*"
-        );
-
-        for (String pattern : sensitivePatterns) {
-            if (methodName.matches(pattern)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
 
     private boolean isCatchBlock(PsiMethodCallExpression expression) {
@@ -89,23 +95,9 @@ public class InsufficientLoggingMonitoringRule extends BaseRule {
         return false;
     }
 
-    private boolean hasErrorLogging(PsiMethodCallExpression expression) {
-        return expression.getText().contains("logger.error") || expression.getText().contains("logger.warn");
-    }
+    // can check for event logs for sensitive operations
+    // can check for improper logging configuration
 
-    private boolean isInsecureLogging(PsiMethodCallExpression expression) {
-        return expression.getText().matches(".*password.*|.*token.*|.*creditCard.*");
-    }
-
-
-
-    private boolean hasAuditLog(PsiTryStatement statement) {
-        return statement.getText().contains("auditLog") || statement.getText().contains("logEvent");
-    }
-
-    private boolean isImproperLoggingConfiguration(String importedClass) {
-        return importedClass != null && importedClass.contains("log4j") && !importedClass.contains("log4j2");
-    }
 
     // Helper to Create Scan Results
     private ScanResult createScanResult(VulnerabilityDefinition definition, String filePath, int lineNumber) {
@@ -119,29 +111,6 @@ public class InsufficientLoggingMonitoringRule extends BaseRule {
                 .filePath(filePath)
                 .recommendations(definition.getRecommendations())
                 .build();
-    }
-
-    private boolean isAdministrativeAction(PsiMethodCallExpression expression) {
-        String methodName = expression.getMethodExpression().getReferenceName();
-
-
-        // Regular expressions for typical administrative actions
-        List<String> adminPatterns = List.of(
-                ".*createUser.*", ".*deleteUser.*", ".*updateUserRole.*", ".*resetPassword.*", ".*deactivateUser.*",
-                ".*addUser.*", ".*removeUser.*", ".*assignRole.*", ".*revokeRole.*", ".*managePermissions.*",
-                ".*activateAccount.*", ".*suspendAccount.*", ".*unlockAccount.*", ".*changeUserSettings.*"
-        );
-
-        for (String pattern : adminPatterns) {
-            if (methodName.matches(pattern)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private boolean isLogged(PsiMethodCallExpression expression) {
-        PsiElement parent = expression.getParent();
-        return parent != null && parent.getText().contains("log");
     }
 
 }

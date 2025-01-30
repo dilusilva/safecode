@@ -4,16 +4,14 @@
     "Rule": "Security Rule",
     "Compliance": "Encryption - Data at Rest",
     "ShortDescription": "Encrypt sensitive data stored in databases",
-    "DetailedDescription": "Ensure sensitive data is encrypted at rest using strong encryption algorithms like AES-256 to prevent unauthorized access to database files.",
-    "Recommendation": "Use Jasypt or database-native encryption mechanisms to secure sensitive fields in the database."
+    "DetailedDescription": "Use AES-256 or equivalent encryption to protect sensitive data at rest and prevent unauthorized access."
   },
   {
     "id": 1002,
     "Rule": "Security Rule",
     "Compliance": "Encryption - Data in Transit",
     "ShortDescription": "Encrypt sensitive data during transmission",
-    "DetailedDescription": "Use secure communication protocols like TLS to encrypt data transmitted over the network, ensuring data integrity and confidentiality.",
-    "Recommendation": "Enforce HTTPS with Spring Security and configure TLS 1.2 or higher for all communication endpoints."
+    "DetailedDescription": "Use TLS 1.2+ to secure data in transit, ensuring integrity and confidentiality over the network."
   },
   {
     "id": 1003,

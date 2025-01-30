@@ -1,6 +1,7 @@
-package org.example.safecode.detection.rules;
+package org.example.safecode.detection.rules.insecure_deserialization;
 
 import com.intellij.psi.*;
+import org.example.safecode.detection.rules.BaseRule;
 import org.example.safecode.models.ScanResult;
 import org.example.safecode.models.VulnerabilityDefinition;
 import org.example.safecode.utils.VulnerabilityDefinitionLoader;
