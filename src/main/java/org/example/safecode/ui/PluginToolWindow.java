@@ -30,6 +30,7 @@ public class PluginToolWindow implements ToolWindowFactory {
     private JTree resultTree;
     private JPanel detailsPanel;
 
+
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         JPanel toolWindowContent = new JPanel(new BorderLayout());
@@ -37,6 +38,9 @@ public class PluginToolWindow implements ToolWindowFactory {
         root = new DefaultMutableTreeNode("Scan Results");
         treeModel = new DefaultTreeModel(root);
         resultTree = new JTree(treeModel);
+
+        // Set the custom renderer
+        resultTree.setCellRenderer(new SeverityTreeCellRenderer());
 
         // Add listener to handle tree node selection
         resultTree.addTreeSelectionListener(e -> {
@@ -48,8 +52,8 @@ public class PluginToolWindow implements ToolWindowFactory {
             Object userObject = selectedNode.getUserObject();
             if (userObject instanceof ScanResult) {
                 ScanResult result = (ScanResult) userObject;
-                navigateToLine(project,result);
-                showDetailsPanel(result,project);
+                navigateToLine(project, result);
+                DetailsPanel.showDetailsPanel(result, project, detailsPanel);
             }
         });
 
@@ -59,7 +63,6 @@ public class PluginToolWindow implements ToolWindowFactory {
 
         // Create the details panel
         detailsPanel = new JPanel(new BorderLayout());
-//        detailsPanel.setBorder(new EmptyBorder(10, 10, 0, 0));
 
         // Create a JSplitPane to split the left and right panels
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, detailsPanel);
@@ -67,7 +70,7 @@ public class PluginToolWindow implements ToolWindowFactory {
         splitPane.setResizeWeight(0.5); // Proportional resizing
         splitPane.setDividerSize(2); // Set the divider size to make the split line width less
 
-// Customize the divider to change its color to dark gray
+        // Customize the divider to change its color to dark gray
         splitPane.setUI(new javax.swing.plaf.basic.BasicSplitPaneUI() {
             @Override
             public BasicSplitPaneDivider createDefaultDivider() {
@@ -75,7 +78,7 @@ public class PluginToolWindow implements ToolWindowFactory {
                 divider.setBackground(Color.DARK_GRAY); // Set the divider color to dark gray
                 return divider;
             }
-        }); // Proportional resizing
+        });
 
         toolWindowContent.add(splitPane, BorderLayout.CENTER);
 
@@ -86,75 +89,63 @@ public class PluginToolWindow implements ToolWindowFactory {
         instance = this;
     }
 
-    private void showDetailsPanel(ScanResult result,Project project) {
-        detailsPanel.removeAll();
-        JEditorPane detailsArea = new JEditorPane();
-        detailsArea.setBorder(new EmptyBorder(10, 10, 0, 0));
-        detailsArea.setEditable(false);
-        detailsArea.setContentType("text/html");
-        // Build the details text with HTML tags for bold titles
-        StringBuilder detailsText = new StringBuilder();
-        detailsText.append("<html>")
-                .append("<style>")
-                .append("body { font-family: Arial, sans-serif; line-height: 1.6; }")
-                .append(".title { font-weight: bold }") // Dark gray for titles
-                .append(".value { margin-left: 5px; }") // Light gray for values
-                .append(".recommendation-title { font-weight: bold; color: #4CAF50; margin-top: 10px; }") // Light green for recommendations title
-                .append(".performance-title { font-weight: bold; color: #B71C1C; margin-top: 10px; }") // Dark red for performance title
-                .append("ul { margin-left: 20px; }") // Adjust list indentation
-                .append("li { margin-bottom: 5px; }") // Add spacing between list items
-                .append("</style>")
-                .append("<body>")
-                // Vulnerability Type
-                .append("<div><span class='title'>Vulnerability Type : </span>")
-                .append("<span class='value'>").append(result.getType().toString()).append("</span></div>")
-                // Line Number
-                .append("<div><span class='title'>Line Number : </span>")
-                .append("<span class='value'>").append(result.getLineNumber()).append("</span></div>")
-                // Description
-                .append("<div class='title' style='margin-top: 10px;'>Description : </div>")
-                .append("<div class='value'>").append(result.getVulnerabilityDefinition().getDescription()).append("</div>")
-                // Recommendations
-                .append("<div class='recommendation-title'>Recommendations :</div>");
-
-        if (result.getRecommendations() == null || result.getRecommendations().isEmpty()) {
-            detailsText.append("<div class='value'>- No recommendations available.</div>");
-        } else {
-            detailsText.append("<ul>");
-            for (String recommendation : result.getRecommendations()) {
-                detailsText.append("<li>").append(recommendation).append("</li>");
-            }
-            detailsText.append("</ul>");
-        }
-
-// Performance Impact of Recommendations
-        detailsText.append("<div class='performance-title'>Performance Impact of Recommendations :</div>");
-        if (result.getVulnerabilityDefinition().getPerformanceImpactDetails() == null || result.getVulnerabilityDefinition().getPerformanceImpactDetails().isEmpty()) {
-            detailsText.append("<div class='value'>- No performance impacts available.</div>");
-        } else {
-            detailsText.append("<ul>");
-            for (String impact : result.getVulnerabilityDefinition().getPerformanceImpactDetails()) {
-                detailsText.append("<li>").append(impact).append("</li>");
-            }
-            detailsText.append("</ul>");
-        }
-
-        detailsText.append("</body></html>");
-        detailsArea.setText(detailsText.toString());
-
-
-
-//        JButton navigateButton = new JButton("Navigate to Line");
-//        navigateButton.addActionListener(e -> navigateToLine(project, result));
+//    @Override
+//    public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+//        JPanel toolWindowContent = new JPanel(new BorderLayout());
 //
-//        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//        buttonPanel.add(navigateButton);
+//        root = new DefaultMutableTreeNode("Scan Results");
+//        treeModel = new DefaultTreeModel(root);
+//        resultTree = new JTree(treeModel);
+//
+//        // Add listener to handle tree node selection
+//        resultTree.addTreeSelectionListener(e -> {
+//            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) resultTree.getLastSelectedPathComponent();
+//            if (selectedNode == null) {
+//                return;
+//            }
+//
+//            Object userObject = selectedNode.getUserObject();
+//            if (userObject instanceof ScanResult) {
+//                ScanResult result = (ScanResult) userObject;
+//                navigateToLine(project,result);
+//                DetailsPanel.showDetailsPanel(result,project,detailsPanel);
+//            }
+//        });
+//
+//        // Enable horizontal scrolling
+//        JBScrollPane scrollPane = new JBScrollPane(resultTree);
+//        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//
+//        // Create the details panel
+//        detailsPanel = new JPanel(new BorderLayout());
+////        detailsPanel.setBorder(new EmptyBorder(10, 10, 0, 0));
+//
+//        // Create a JSplitPane to split the left and right panels
+//        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, detailsPanel);
+//        splitPane.setDividerLocation(600); // Initial divider location
+//        splitPane.setResizeWeight(0.5); // Proportional resizing
+//        splitPane.setDividerSize(2); // Set the divider size to make the split line width less
+//
+//// Customize the divider to change its color to dark gray
+//        splitPane.setUI(new javax.swing.plaf.basic.BasicSplitPaneUI() {
+//            @Override
+//            public BasicSplitPaneDivider createDefaultDivider() {
+//                BasicSplitPaneDivider divider = super.createDefaultDivider();
+//                divider.setBackground(Color.DARK_GRAY); // Set the divider color to dark gray
+//                return divider;
+//            }
+//        }); // Proportional resizing
+//
+//        toolWindowContent.add(splitPane, BorderLayout.CENTER);
+//
+//        ContentFactory contentFactory = ContentFactory.getInstance();
+//        Content content = contentFactory.createContent(toolWindowContent, "", false);
+//        toolWindow.getContentManager().addContent(content);
+//
+//        instance = this;
+//    }
 
-        detailsPanel.add(new JBScrollPane(detailsArea), BorderLayout.CENTER);
-//        detailsPanel.add(buttonPanel, BorderLayout.SOUTH);
-        detailsPanel.revalidate();
-        detailsPanel.repaint();
-    }
+
 
     public static PluginToolWindow getInstance() {
         return instance;

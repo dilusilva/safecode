@@ -3,12 +3,7 @@
     "id": "101",
     "type": "SQL_INJECTION",
     "description": "Potential SQL Injection vulnerability detected due to the usage of executeQuery or executeUpdate methods without the use of PreparedStatement.",
-    "compliance": [
-    ],
-    "recommendations": [
-      "Use prepared statements instead of concatenation.",
-      "Validate user inputs for SQL injection risks."
-    ],
+    "compliance": [],
     "performanceImpactDetails": [
       "Use prepared statements instead of concatenation : Negligible impact on performance."
     ]
@@ -17,12 +12,7 @@
     "id": "102",
     "type": "SQL_INJECTION",
     "description": "Potential SQL Injection in batched query using 'addBatch'",
-    "compliance": [
-    ],
-    "recommendations": [
-      "Ensure safe parameterized batched queries.",
-      "Avoid dynamic SQL in batched queries."
-    ],
+    "compliance": [],
     "performanceImpactDetails": [
       "Ensure safe parameterized batched queries : Minimal impact on resource usage.",
       "Avoid dynamic SQL in batched queries : Improved maintainability, negligible impact."
@@ -33,66 +23,59 @@
     "type": "SQL_INJECTION",
     "description": "Potential SQL Injection due to dynamic query construction",
     "compliance": [],
-    "recommendations": [],
-    "performanceImpactDetails": []
+    "performanceImpactDetails": [
+      "Switching to parameterized queries may add slight overhead due to query preparation but ensures security.",
+      "Using ORMs can increase resource utilization slightly but significantly reduces vulnerability risks."
+    ]
   },
   {
     "id": "104",
     "type": "SQL_INJECTION",
     "description": "Potential SQL Injection detected in stored procedure call",
     "compliance": [],
-    "recommendations": [],
-    "performanceImpactDetails": []
+    "performanceImpactDetails": [
+      "Using parameterized stored procedures may slightly increase execution time but significantly enhances security.",
+      "Input validation introduces negligible overhead but ensures data integrity and reduces attack vectors."
+    ]
   },
   {
     "id": "105",
     "type": "SQL_INJECTION",
     "description": "Potential SQL Injection detected in native @Query annotation",
     "compliance": [],
-    "recommendations": [
-      "Use parameterized queries instead of directly embedding user input in native @Query annotations.",
-      "Validate and sanitize all user inputs before using them in queries.",
-      "Leverage JPA's named parameters (e.g., `:parameterName`) to securely pass input values.",
-      "Avoid using string concatenation to construct query strings dynamically."
-    ],
-    "performanceImpactDetails": []
+    "performanceImpactDetails": [
+      "Switching to named parameters or parameterized queries may introduce slight parsing overhead but ensures enhanced security.",
+      "Input validation adds negligible performance overhead but significantly reduces the risk of SQL Injection."
+    ]
   },
   {
     "id": "106",
     "type": "SQL_INJECTION",
     "description": "Potential SQL Injection detected in Criteria API query",
     "compliance": [],
-    "recommendations": [
-      "blaha blah"
-    ],
-    "performanceImpactDetails": []
+    "performanceImpactDetails": [
+      "Using parameter binding in the Criteria API has negligible performance impact but ensures safer query construction.",
+      "Input validation may slightly increase resource utilization during runtime but significantly enhances security."
+    ]
   },
   {
     "id": "107",
     "type": "SQL_INJECTION",
     "description": "Potential SQL Injection detected in named query",
     "compliance": [],
-    "recommendations": [
-      "blaha blah"
-    ],
-    "performanceImpactDetails": []
+    "performanceImpactDetails": [
+      "Using parameterized named queries introduces negligible performance overhead while significantly reducing SQL Injection risks.",
+      "Performing regular security tests on named queries ensures secure query execution with minimal runtime cost."
+    ]
   },
   {
     "id": "205",
     "type": "BROKEN_ACCESS_CONTROL",
     "description": "Missing security annotations (e.g., @PreAuthorize, @Secured) in controller method. Without these annotations, sensitive endpoints may be accessible to unauthorized users, leading to potential data breaches or unauthorized actions. This issue commonly occurs when access control is implemented at the service layer but overlooked at the controller level, leaving endpoints exposed.",
     "compliance": [],
-    "recommendations": [
-      "Add appropriate security annotations (e.g., @PreAuthorize, @Secured, or @RolesAllowed) to controller methods to restrict access based on roles or permissions.",
-      "Define granular access control policies that align with the application's security requirements.",
-      "Review all controller methods to ensure consistent enforcement of access control, particularly for endpoints handling sensitive or administrative operations.",
-      "Test the effectiveness of the added annotations using tools like Postman or Burp Suite by attempting unauthorized requests.",
-      "Document the intended access control policies for each endpoint to avoid future misconfigurations."
-    ],
     "performanceImpactDetails": [
       "Adding security annotations like @PreAuthorize or @Secured has minimal runtime impact due to Spring Security's optimized filter chain and caching mechanisms.",
       "Granular access control policies introduce slight overhead for complex role or permission checks but are efficient in well-designed RBAC systems."
-
     ]
   },
   {
@@ -100,11 +83,6 @@
     "type": "BROKEN_ACCESS_CONTROL",
     "description": "Missing access control logic in sensitive service method.",
     "compliance": [],
-    "recommendations": [
-      "Implement access control logic in service methods handling sensitive operations.",
-      "Validate user roles and permissions explicitly within the service layer.",
-      "Log access control checks for audit purposes."
-    ],
     "performanceImpactDetails": [
       "Minimal impact as access control checks are lightweight and essential for security.",
       "Ensure access control logic is efficient to avoid unnecessary overhead."
@@ -115,10 +93,6 @@
     "type": "BROKEN_AUTHENTICATION",
     "description": "Hardcoded credentials detected in the code (e.g., username, password, or API keys).",
     "compliance": [],
-    "recommendations": [
-      "Use environment variables or secure configuration services to manage sensitive credentials.",
-      "Avoid hardcoding sensitive information directly in the codebase."
-    ],
     "performanceImpactDetails": [
       "Minimal performance impact if environment variables are used.",
       "Could add additional startup time for loading secure configuration."
@@ -129,11 +103,6 @@
     "type": "BROKEN_AUTHENTICATION",
     "description": "Weak or missing password policies detected in the authentication logic.",
     "compliance": [],
-    "recommendations": [
-      "Enforce strong password policies with a minimum length of 8 characters.",
-      "Include complexity requirements (uppercase, lowercase, numbers, special characters).",
-      "Disallow common passwords using a blacklist."
-    ],
     "performanceImpactDetails": [
       "Minimal impact on performance as password validation is typically lightweight."
     ]
@@ -143,11 +112,6 @@
     "type": "BROKEN_AUTHENTICATION",
     "description": "Detected potential plaintext password storage in the database or logs.",
     "compliance": [],
-    "recommendations": [
-      "Hash passwords using a secure hashing algorithm (e.g., bcrypt, Argon2).",
-      "Never store passwords in plaintext, even for testing purposes.",
-      "Ensure proper salting of passwords before hashing."
-    ],
     "performanceImpactDetails": [
       "Moderate performance impact due to password hashing computation during login.",
       "Impact can be mitigated using efficient hash algorithms and reasonable iterations."
@@ -158,10 +122,6 @@
     "type": "BROKEN_AUTHENTICATION",
     "description": "Session fixation vulnerability detected where session IDs are not regenerated upon authentication.",
     "compliance": [],
-    "recommendations": [
-      "Regenerate session IDs after successful authentication to prevent fixation attacks.",
-      "Invalidate the previous session before generating a new one."
-    ],
     "performanceImpactDetails": [
       "Negligible performance impact as session regeneration is a lightweight operation."
     ]
@@ -171,11 +131,6 @@
     "type": "BROKEN_AUTHENTICATION",
     "description": "Weak JWT signing algorithm detected (e.g., HS256 with a weak key).",
     "compliance": [],
-    "recommendations": [
-      "Use a strong signing algorithm such as RS256 or ES256 for JWTs.",
-      "Avoid weak or shared secret keys for signing JWTs.",
-      "Regularly rotate signing keys and monitor for key leaks."
-    ],
     "performanceImpactDetails": [
       "Negligible impact if strong algorithms like RS256 are used efficiently.",
       "Performance impact may increase slightly with longer key lengths."
@@ -189,12 +144,6 @@
       "PCI-DSS",
       "HIPAA"
     ],
-    "recommendations": [
-      "Avoid using deserialization methods on untrusted or external inputs.",
-      "Use libraries or frameworks with built-in deserialization safety mechanisms.",
-      "Consider implementing a custom serialization/deserialization process with strict input validation.",
-      "Leverage serialization filters or whitelist known safe classes."
-    ],
     "performanceImpactDetails": [
       "Implementing input validation and secure deserialization can slightly increase processing overhead.",
       "Replacing insecure deserialization libraries with secure ones may require migration efforts but improves overall security."
@@ -205,12 +154,6 @@
     "type": "INSECURE_DESERIALIZATION",
     "description": "Deserialization of data originating from untrusted sources such as 'request.getParameter', 'getInputStream', or 'getHeader'.",
     "compliance": [],
-    "recommendations": [
-      "Validate all inputs from external sources before processing.",
-      "Avoid directly deserializing data from untrusted sources; instead, implement secure intermediary processing steps.",
-      "Use input validation libraries to ensure data integrity.",
-      "Consider using serialization filters to allow only safe classes to be deserialized."
-    ],
     "performanceImpactDetails": [
       "Input validation may add minor computational overhead.",
       "Replacing deserialization logic with secure alternatives may require additional development effort."
@@ -221,12 +164,6 @@
     "type": "INSECURE_DESERIALIZATION",
     "description": "Deserialized object missing validation. Detected use of 'java.io.Object' or similar types without validation.",
     "compliance": [],
-    "recommendations": [
-      "Validate all deserialized objects to ensure they conform to expected types and structures.",
-      "Implement a whitelist approach by using serialization filters to allow only safe classes for deserialization.",
-      "Avoid directly using deserialized objects in sensitive operations without prior validation.",
-      "Use frameworks or libraries that support secure deserialization practices."
-    ],
     "performanceImpactDetails": [
       "Adding validation may increase processing time but enhances security.",
       "Whitelisting may require upfront configuration but prevents exploitation of insecure object types."
@@ -237,12 +174,6 @@
     "type": "INSECURE_DESERIALIZATION",
     "description": "Detected usage of a vulnerable library in the code.",
     "compliance": [],
-    "recommendations": [
-      "Replace vulnerable libraries like 'org.apache.commons.collections', 'com.thoughtworks.xstream', or 'org.springframework.beans' with secure and updated alternatives.",
-      "Regularly update third-party dependencies to their latest secure versions.",
-      "Avoid libraries with known security vulnerabilities unless absolutely necessary and with compensating controls in place.",
-      "Perform regular dependency audits to identify and remediate security issues."
-    ],
     "performanceImpactDetails": [
       "Replacing a library with a secure alternative may have minor integration costs but ensures improved security and compliance.",
       "Maintaining updated dependencies reduces the risk of performance degradation caused by unpatched vulnerabilities."
@@ -253,10 +184,6 @@
     "type": "INSUFFICIENT_LOGGING_AND_MONITORING",
     "description": "Sensitive operations are not logged.",
     "compliance": [],
-    "recommendations": [
-      "Log sensitive operations like access to confidential information.",
-      "Use structured logging with proper metadata for better traceability."
-    ],
     "performanceImpactDetails": [
       "Logging sensitive operations may introduce additional overhead in high-throughput systems. Consider using asynchronous logging."
     ]
@@ -266,10 +193,6 @@
     "type": "INSUFFICIENT_LOGGING_AND_MONITORING",
     "description": "Missing logging for exceptions and error handling.",
     "compliance": [],
-    "recommendations": [
-      "Ensure all exceptions and errors are logged with sufficient details.",
-      "Use log levels (e.g., ERROR, WARN) appropriately to distinguish critical issues."
-    ],
     "performanceImpactDetails": [
       "Error logging might increase storage requirements but is essential for debugging and auditing."
     ]
@@ -279,10 +202,6 @@
     "type": "INSUFFICIENT_LOGGING_AND_MONITORING",
     "description": "Improper logging of sensitive data.",
     "compliance": [],
-    "recommendations": [
-      "Avoid logging sensitive information like passwords, credit card numbers, or personal health information.",
-      "Use redaction or tokenization for sensitive data if logging is unavoidable."
-    ],
     "performanceImpactDetails": [
       "Redacting sensitive information can add computational overhead but ensures compliance with privacy regulations."
     ]
@@ -292,12 +211,72 @@
     "type": "INSUFFICIENT_LOGGING_AND_MONITORING",
     "description": "Missing audit logs for administrative actions.",
     "compliance": [],
-    "recommendations": [
-      "Log all administrative actions, including user creation, deletion, and role changes.",
-      "Include timestamp, user ID, and action details in audit logs."
-    ],
     "performanceImpactDetails": [
       "Audit logging may impact database write performance; consider using a separate log store."
     ]
+  },
+  {
+    "id": "601",
+    "type": "SECURITY_MISCONFIGURATION",
+    "description": "Missing critical HTTP security headers in the application. Without these headers, the application is vulnerable to attacks such as clickjacking, MIME sniffing, and cross-site scripting (XSS). Commonly omitted headers include X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security (HSTS), and Content-Security-Policy (CSP).",
+    "compliance": [],
+    "performanceImpactDetails": [
+      "Adding security headers has negligible performance impact as they are applied at the HTTP response level.",
+      "Strict-Transport-Security (HSTS) requires secure HTTPS configuration, which may introduce overhead during initial setup but improves long-term security."
+    ]
+  },
+  {
+    "id": "602",
+    "type": "SECURITY_MISCONFIGURATION",
+    "description": "HTTPS is not enforced in the application. Allowing HTTP traffic can expose sensitive data to interception and man-in-the-middle (MITM) attacks. This misconfiguration occurs when HttpSecurity.requiresChannel().requiresSecure() is not configured, leaving communication insecure.",
+    "compliance": [],
+    "performanceImpactDetails": [
+      "Enforcing HTTPS introduces negligible performance impact with modern TLS implementations.",
+      "Initial HTTPS handshake may add slight latency, but this is minimized with session reuse and HTTP/2 optimizations."
+    ]
+  },
+  {
+    "id": "603",
+    "type": "SECURITY_MISCONFIGURATION",
+    "description": "Default or hardcoded credentials are present in properties files. These credentials can expose the application to unauthorized access, data breaches, or exploitation by attackers. This misconfiguration often occurs when sensitive values like database passwords, API keys, or secrets are hardcoded instead of being externalized or secured.",
+    "compliance": [],
+    "performanceImpactDetails": [
+      "Replacing hardcoded credentials with dynamically loaded secrets introduces negligible performance impact.",
+      "Using secure secrets management tools may add minimal overhead during the initialization phase but significantly enhances security."
+    ]
+  },
+  {
+    "id": "701",
+    "type": "SENSITIVE_DATA_EXPOSURE",
+    "description": "Sensitive data is logged in application logs. Logging sensitive information such as passwords, API keys, tokens, or PII can lead to serious data breaches. Logs are often accessible to multiple teams or systems and may be stored in shared or unprotected environments, making this vulnerability highly critical.",
+    "compliance": [],
+    "performanceImpactDetails": [
+      "Masking or redacting sensitive data in logs introduces negligible performance impact.",
+      "Properly configured centralized logging and access controls may introduce a minor administrative overhead but significantly enhance security."
+    ]
+  },
+  {
+    "id": "702",
+    "type": "SENSITIVE_DATA_EXPOSURE",
+    "description": "Hardcoded sensitive information is present in the codebase. This includes credentials such as passwords, API keys, tokens, or secrets that are directly embedded in the source code. Hardcoding sensitive data exposes the application to security risks, including unauthorized access and data breaches, especially if the code is stored in version control systems.",
+    "compliance": [],
+    "performanceImpactDetails": [
+      "Using environment variables or secrets management tools introduces negligible runtime overhead.",
+      "Secure secrets management may require additional setup time but significantly enhances overall application security."
+    ]
+  },
+
+  {
+    "id": "1001",
+    "type": "ENCRYPTION_AT_REST",
+    "description": "Unencrypted PHI data detected. Ensure data is encrypted before saving.",
+    "compliance": [
+      "HIPAA"
+    ],
+    "performanceImpactDetails": [
+      "Using AES-256 or equivalent encryption introduces negligible runtime overhead.",
+      "Encrypting sensitive data at rest enhances security but may introduce minimal processing latency."
+    ]
   }
+
 ]

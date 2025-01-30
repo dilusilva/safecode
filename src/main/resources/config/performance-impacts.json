@@ -1,0 +1,686 @@
+[
+  {
+    "id": "101",
+    "type": "SQL_INJECTION",
+    "recommendations": [
+      "Use prepared statements instead of concatenation.",
+      "Validate user inputs for SQL injection risks."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "101-A",
+        "impactLevel": "Low",
+        "description": "Using prepared statements eliminates SQL injection but slightly increases memory usage due to caching.",
+        "details": "Minimal performance impact as the database can reuse compiled queries."
+      },
+      {
+        "id": "101-B",
+        "impactLevel": "Moderate",
+        "description": "Using strict input validation prevents injection but adds minor CPU overhead.",
+        "details": "Regular expressions and validation rules require additional CPU cycles."
+      }
+    ]
+  },
+  {
+    "id": "102",
+    "type": "SQL_INJECTION",
+    "recommendations": [
+      "Ensure safe parameterized batched queries.",
+      "Avoid dynamic SQL in batched queries."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "102-A",
+        "impactLevel": "Moderate",
+        "description": "Switching to parameterized batched queries ensures security but adds slight database overhead.",
+        "details": "Batched execution improves performance but needs prepared statements."
+      },
+      {
+        "id": "102-B",
+        "impactLevel": "High",
+        "description": "Eliminating batch queries entirely improves security but may slow down bulk inserts.",
+        "details": "Requires rewriting logic to use safe transactions."
+      }
+    ]
+  },
+  {
+    "id": "103",
+    "type": "SQL_INJECTION",
+    "recommendations": [
+      "Use parameterized queries or prepared statements instead of concatenating user input into query strings.",
+      "Validate and sanitize all user inputs before using them in queries.",
+      "Employ Object-Relational Mapping (ORM) frameworks like Hibernate or JPA to construct queries securely.",
+      "Use input validation libraries or regular expressions to restrict accepted input formats.",
+      "Perform regular security testing to detect and mitigate SQL Injection vulnerabilities."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "103-A",
+        "impactLevel": "Low",
+        "description": "Using prepared statements improves security with negligible performance impact.",
+        "details": "Prepared statements allow pre-compiling SQL queries, reducing execution time and minimizing risk. However, excessive prepared statement usage may increase database load in high-frequency scenarios."
+      },
+      {
+        "id": "103-B",
+        "impactLevel": "Moderate",
+        "description": "Using ORM frameworks ensures security but introduces processing overhead.",
+        "details": "ORM frameworks like Hibernate or JPA prevent SQL injection but introduce extra processing. Unoptimized ORM queries may result in **N+1 query issues**, impacting performance if not managed properly."
+      },
+      {
+        "id": "103-C",
+        "impactLevel": "Moderate",
+        "description": "Validating and sanitizing user inputs increases security but adds slight CPU overhead.",
+        "details": "Using input validation libraries and regular expressions to sanitize user input requires additional processing time. The impact depends on the complexity of validation rules."
+      }
+    ]
+  },
+  {
+    "id": "104",
+    "type": "SQL_INJECTION",
+    "recommendations": [
+      "Ensure all stored procedures use parameterized inputs to prevent SQL Injection.",
+      "Avoid concatenating user inputs into stored procedure calls; use bind variables instead.",
+      "Restrict database user permissions to limit the impact of a successful injection attack.",
+      "Perform input validation and sanitization on all user inputs before passing them to stored procedures.",
+      "Enable database logging and monitoring to detect and respond to suspicious query patterns."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "104-A",
+        "impactLevel": "Low",
+        "description": "Using parameterized inputs in stored procedures improves security with minimal performance impact.",
+        "details": "Stored procedures with bind variables reduce execution time by allowing query caching. However, excessive stored procedure usage may increase maintenance overhead for large applications."
+      },
+      {
+        "id": "104-B",
+        "impactLevel": "Moderate",
+        "description": "Enforcing strict input validation increases security but may introduce processing overhead.",
+        "details": "Sanitizing inputs using validation libraries or regex adds a slight CPU overhead. However, this is essential to prevent injection attacks and improve data integrity."
+      },
+      {
+        "id": "104-C",
+        "impactLevel": "Moderate",
+        "description": "Enabling database query logging improves security but can affect database performance.",
+        "details": "Database logging helps detect suspicious queries in real time but can increase I/O operations and impact performance if not optimized properly."
+      }
+    ]
+  },
+  {
+    "id": "105",
+    "type": "SQL_INJECTION",
+    "recommendations": [
+      "Use parameterized queries instead of directly embedding user input in native @Query annotations.",
+      "Validate and sanitize all user inputs before using them in queries.",
+      "Leverage JPA's named parameters (e.g., `:parameterName`) to securely pass input values.",
+      "Avoid using string concatenation to construct query strings dynamically.",
+      "Enable SQL logging and review executed queries to ensure they are constructed securely."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "105-A",
+        "impactLevel": "Low",
+        "description": "Using JPA named parameters improves security with minimal performance impact.",
+        "details": "Named parameters in @Query annotations prevent SQL injection and make queries reusable, improving maintainability with negligible processing overhead."
+      },
+      {
+        "id": "105-B",
+        "impactLevel": "Moderate",
+        "description": "Validating and sanitizing user input ensures security but may introduce minor processing overhead.",
+        "details": "Sanitization and validation increase CPU usage slightly due to regex checks and input filtering but provide significant security benefits."
+      },
+      {
+        "id": "105-C",
+        "impactLevel": "Moderate",
+        "description": "Enabling SQL query logging improves visibility but can affect database performance.",
+        "details": "Logging executed queries helps identify security vulnerabilities but increases disk I/O and log file size, which may degrade performance if excessive queries are logged."
+      }
+    ]
+  },
+  {
+    "id": "106",
+    "type": "SQL_INJECTION",
+    "recommendations": [
+      "Use the Criteria API's parameter binding feature to prevent SQL Injection.",
+      "Validate user inputs before using them to construct criteria queries.",
+      "Avoid dynamically concatenating strings to build criteria queries.",
+      "Test all criteria queries with edge-case inputs to identify potential injection vulnerabilities."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "106-A",
+        "impactLevel": "Low",
+        "description": "Using Criteria API parameter binding improves security with minimal performance overhead.",
+        "details": "Criteria API's parameter binding prevents direct SQL injection and enhances query safety without noticeable execution slowdowns."
+      },
+      {
+        "id": "106-B",
+        "impactLevel": "Moderate",
+        "description": "Validating user inputs adds security but may introduce slight processing delays.",
+        "details": "Implementing input validation for Criteria API queries can slightly increase CPU load due to regex matching and filtering, but it significantly improves security."
+      },
+      {
+        "id": "106-C",
+        "impactLevel": "Moderate",
+        "description": "Testing all criteria queries with various inputs improves security but requires additional development effort.",
+        "details": "Running extensive tests on criteria queries ensures resilience against SQL Injection but adds complexity to the development and testing pipeline."
+      }
+    ]
+  },
+  {
+    "id": "107",
+    "type": "SQL_INJECTION",
+    "recommendations": [
+      "Use parameterized inputs in named queries to prevent SQL Injection.",
+      "Ensure named queries do not include user inputs through concatenation.",
+      "Test all named queries for SQL Injection vulnerabilities by simulating malicious inputs.",
+      "Validate and sanitize all user inputs before passing them to named queries.",
+      "Use database-level controls, such as read-only permissions for queries, to limit potential damage."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "107-A",
+        "impactLevel": "Low",
+        "description": "Using parameterized inputs in named queries enhances security without affecting performance.",
+        "details": "Prepared statements and named query parameters prevent SQL Injection with minimal impact on query execution time."
+      },
+      {
+        "id": "107-B",
+        "impactLevel": "Moderate",
+        "description": "Validating and sanitizing inputs before passing them to named queries introduces slight processing overhead.",
+        "details": "Input validation requires additional CPU cycles for sanitization but is necessary to prevent injection attacks."
+      },
+      {
+        "id": "107-C",
+        "impactLevel": "Moderate",
+        "description": "Testing named queries with simulated attacks increases development and testing effort but improves security.",
+        "details": "Security testing helps detect vulnerabilities before deployment, but it adds extra workload for QA and security teams."
+      }
+    ]
+  },
+  {
+    "id": "205",
+    "type": "BROKEN_ACCESS_CONTROL",
+    "recommendations": [
+      "Add appropriate security annotations (e.g., @PreAuthorize, @Secured, or @RolesAllowed) to controller methods to restrict access based on roles or permissions.",
+      "Define granular access control policies that align with the application's security requirements.",
+      "Review all controller methods to ensure consistent enforcement of access control, particularly for endpoints handling sensitive or administrative operations.",
+      "Test the effectiveness of the added annotations using tools like Postman or Burp Suite by attempting unauthorized requests.",
+      "Document the intended access control policies for each endpoint to avoid future misconfigurations."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "205-A",
+        "impactLevel": "Low",
+        "description": "Adding security annotations at the controller level introduces negligible performance overhead.",
+        "details": "Security annotations like @PreAuthorize and @RolesAllowed are handled efficiently by Spring Security and do not significantly impact request processing time."
+      },
+      {
+        "id": "205-B",
+        "impactLevel": "Moderate",
+        "description": "Implementing granular access control policies requires additional authorization checks per request.",
+        "details": "More detailed access control policies may add slight processing overhead, as they require evaluating user roles, permissions, and scopes dynamically."
+      },
+      {
+        "id": "205-C",
+        "impactLevel": "Moderate",
+        "description": "Testing access control policies with security tools increases development and QA effort.",
+        "details": "Manually testing access control with tools like Postman and Burp Suite ensures security but adds additional workload during testing cycles."
+      }
+    ]
+  },
+  {
+    "id": "206",
+    "type": "BROKEN_ACCESS_CONTROL",
+    "recommendations": [
+      "Implement access control logic in service methods handling sensitive operations.",
+      "Validate user roles and permissions explicitly within the service layer.",
+      "Log access control checks for audit purposes."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "206-A",
+        "impactLevel": "Low",
+        "description": "Adding access control logic in service methods has minimal impact on performance.",
+        "details": "Explicitly validating roles and permissions in the service layer only adds a few conditional checks and does not affect response times significantly."
+      },
+      {
+        "id": "206-B",
+        "impactLevel": "Moderate",
+        "description": "Logging access control events may introduce slight disk I/O and processing overhead.",
+        "details": "Logging all access control decisions for auditing purposes can increase log storage and processing, but it enhances security visibility."
+      },
+      {
+        "id": "206-C",
+        "impactLevel": "Moderate",
+        "description": "Enforcing strict role-based access control (RBAC) in service methods may increase authorization processing time.",
+        "details": "Complex role validation logic may require additional database lookups or external authorization service calls, adding minor latency."
+      }
+    ]
+  },
+  {
+    "id": "307",
+    "type": "BROKEN_AUTHENTICATION",
+    "recommendations": [
+      "Use environment variables or secure configuration services to manage sensitive credentials.",
+      "Avoid hardcoding sensitive information directly in the codebase."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "307-A",
+        "impactLevel": "Low",
+        "description": "Using environment variables for credentials has no runtime performance impact.",
+        "details": "Environment variables are read at application startup and do not add runtime processing overhead."
+      },
+      {
+        "id": "307-B",
+        "impactLevel": "Moderate",
+        "description": "Using external configuration services may introduce minimal network latency.",
+        "details": "Fetching secrets from an external vault or configuration service (e.g., AWS Secrets Manager, HashiCorp Vault) may introduce a slight delay in retrieving credentials."
+      }
+    ]
+  },
+  {
+    "id": "308",
+    "type": "BROKEN_AUTHENTICATION",
+    "recommendations": [
+      "Enforce strong password policies with a minimum length of 8 characters.",
+      "Include complexity requirements (uppercase, lowercase, numbers, special characters).",
+      "Disallow common passwords using a blacklist."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "308-A",
+        "impactLevel": "Low",
+        "description": "Enforcing password complexity has no significant impact on authentication performance.",
+        "details": "Password strength checks are simple string operations that do not affect system performance."
+      },
+      {
+        "id": "308-B",
+        "impactLevel": "Moderate",
+        "description": "Checking against a large password blacklist may introduce slight validation overhead.",
+        "details": "Using an extensive blacklist (e.g., Have I Been Pwned API) requires lookups that may slightly increase processing time."
+      }
+    ]
+  },
+  {
+    "id": "309",
+    "type": "BROKEN_AUTHENTICATION",
+    "recommendations": [
+      "Hash passwords using a secure hashing algorithm (e.g., bcrypt, Argon2).",
+      "Never store passwords in plaintext, even for testing purposes.",
+      "Ensure proper salting of passwords before hashing."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "309-A",
+        "impactLevel": "Moderate",
+        "description": "Using secure hashing algorithms (e.g., bcrypt, Argon2) increases CPU usage slightly.",
+        "details": "Stronger hashing algorithms introduce computational overhead, but it is necessary for security."
+      },
+      {
+        "id": "309-B",
+        "impactLevel": "Low",
+        "description": "Salting passwords before hashing has minimal impact on performance.",
+        "details": "Salting ensures unique hashes and is an efficient step before applying a secure hash function."
+      }
+    ]
+  },
+  {
+    "id": "310",
+    "type": "BROKEN_AUTHENTICATION",
+    "recommendations": [
+      "Regenerate session IDs after successful authentication to prevent fixation attacks.",
+      "Invalidate the previous session before generating a new one."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "310-A",
+        "impactLevel": "Low",
+        "description": "Session ID regeneration has a negligible impact on authentication performance.",
+        "details": "Session management frameworks efficiently handle regeneration without noticeable delays."
+      },
+      {
+        "id": "310-B",
+        "impactLevel": "Moderate",
+        "description": "Frequent session invalidation may increase database or memory cache operations.",
+        "details": "Destroying and recreating sessions in databases like Redis or SQL-based session stores adds slight overhead."
+      }
+    ]
+  },
+  {
+    "id": "311",
+    "type": "BROKEN_AUTHENTICATION",
+    "recommendations": [
+      "Use a strong signing algorithm such as RS256 or ES256 for JWTs.",
+      "Avoid weak or shared secret keys for signing JWTs.",
+      "Regularly rotate signing keys and monitor for key leaks."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "311-A",
+        "impactLevel": "Moderate",
+        "description": "Using asymmetric encryption (e.g., RS256) for JWTs adds processing time compared to HS256.",
+        "details": "Asymmetric algorithms require additional cryptographic computations, leading to slightly slower token validation."
+      },
+      {
+        "id": "311-B",
+        "impactLevel": "Low",
+        "description": "Rotating signing keys periodically has minimal impact on system performance.",
+        "details": "Regular key rotation ensures security but does not affect normal JWT verification in well-optimized systems."
+      }
+    ]
+  },
+  {
+    "id": "412",
+    "type": "INSECURE_DESERIALIZATION",
+    "recommendations": [
+      "Avoid using deserialization methods on untrusted or external inputs.",
+      "Use libraries or frameworks with built-in deserialization safety mechanisms.",
+      "Consider implementing a custom serialization/deserialization process with strict input validation.",
+      "Leverage serialization filters or whitelist known safe classes."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "412-A",
+        "impactLevel": "Low",
+        "description": "Using safe deserialization libraries introduces negligible overhead.",
+        "details": "Switching to safer libraries like Jackson with strict validation has minimal impact on application performance."
+      },
+      {
+        "id": "412-B",
+        "impactLevel": "Moderate",
+        "description": "Whitelisting allowed classes in deserialization may add some validation overhead.",
+        "details": "Implementing class whitelisting requires checking each deserialized object, which may slightly slow down processing."
+      }
+    ]
+  },
+  {
+    "id": "413",
+    "type": "INSECURE_DESERIALIZATION",
+    "recommendations": [
+      "Validate all inputs from external sources before processing.",
+      "Avoid directly deserializing data from untrusted sources; instead, implement secure intermediary processing steps.",
+      "Use input validation libraries to ensure data integrity.",
+      "Consider using serialization filters to allow only safe classes to be deserialized."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "413-A",
+        "impactLevel": "Low",
+        "description": "Validating external input before deserialization has minimal performance impact.",
+        "details": "String sanitization and basic type checking before deserialization introduce negligible processing delays."
+      },
+      {
+        "id": "413-B",
+        "impactLevel": "Moderate",
+        "description": "Implementing secure intermediary processing may introduce additional parsing steps.",
+        "details": "Using an intermediary format (e.g., JSON Schema validation before object conversion) increases processing but enhances security."
+      }
+    ]
+  },
+  {
+    "id": "414",
+    "type": "INSECURE_DESERIALIZATION",
+    "recommendations": [
+      "Validate all deserialized objects to ensure they conform to expected types and structures.",
+      "Implement a whitelist approach by using serialization filters to allow only safe classes for deserialization.",
+      "Avoid directly using deserialized objects in sensitive operations without prior validation.",
+      "Use frameworks or libraries that support secure deserialization practices."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "414-A",
+        "impactLevel": "Moderate",
+        "description": "Validating object types post-deserialization introduces minor CPU overhead.",
+        "details": "Ensuring objects match expected structures requires type checking, which may add slight processing latency."
+      },
+      {
+        "id": "414-B",
+        "impactLevel": "Moderate",
+        "description": "Using serialization filters increases security but adds deserialization time.",
+        "details": "Filtering deserialized classes at runtime involves validation checks that may slow deserialization slightly."
+      }
+    ]
+  },
+  {
+    "id": "415",
+    "type": "INSECURE_DESERIALIZATION",
+    "recommendations": [
+      "Replace vulnerable libraries like 'org.apache.commons.collections', 'com.thoughtworks.xstream', or 'org.springframework.beans' with secure and updated alternatives.",
+      "Regularly update third-party dependencies to their latest secure versions.",
+      "Avoid libraries with known security vulnerabilities unless absolutely necessary and with compensating controls in place.",
+      "Perform regular dependency audits to identify and remediate security issues."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "415-A",
+        "impactLevel": "Low",
+        "description": "Updating dependencies has minimal impact on runtime performance.",
+        "details": "Keeping dependencies up-to-date ensures security with negligible processing overhead."
+      },
+      {
+        "id": "415-B",
+        "impactLevel": "Moderate",
+        "description": "Replacing insecure libraries may require refactoring and re-testing.",
+        "details": "Switching libraries for safer alternatives may lead to development delays but improves long-term maintainability and security."
+      }
+    ]
+  },
+  {
+    "id": "516",
+    "type": "INSUFFICIENT_LOGGING_AND_MONITORING",
+    "recommendations": [
+      "Log sensitive operations like access to confidential information.",
+      "Use structured logging with proper metadata for better traceability."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "516-A",
+        "impactLevel": "Low",
+        "description": "Adding structured logging has minimal performance overhead.",
+        "details": "Structured logging using JSON format improves traceability while having negligible impact on system performance."
+      },
+      {
+        "id": "516-B",
+        "impactLevel": "Moderate",
+        "description": "Increased logging may result in higher storage and processing costs.",
+        "details": "Logging all sensitive operations generates more log data, increasing storage usage and processing time in high-traffic applications."
+      }
+    ]
+  },
+  {
+    "id": "517",
+    "type": "INSUFFICIENT_LOGGING_AND_MONITORING",
+    "recommendations": [
+      "Ensure all exceptions and errors are logged with sufficient details.",
+      "Use log levels (e.g., ERROR, WARN) appropriately to distinguish critical issues."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "517-A",
+        "impactLevel": "Low",
+        "description": "Logging exceptions adds minimal processing overhead.",
+        "details": "Logging stack traces introduces negligible CPU load unless excessive logging occurs."
+      },
+      {
+        "id": "517-B",
+        "impactLevel": "Moderate",
+        "description": "Frequent error logging may affect performance in high-throughput applications.",
+        "details": "If logging is excessive or synchronous, it may slow down request processing and increase I/O operations."
+      }
+    ]
+  },
+  {
+    "id": "518",
+    "type": "INSUFFICIENT_LOGGING_AND_MONITORING",
+    "recommendations": [
+      "Avoid logging sensitive information like passwords, credit card numbers, or personal health information.",
+      "Use redaction or tokenization for sensitive data if logging is unavoidable."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "518-A",
+        "impactLevel": "Low",
+        "description": "Avoiding sensitive data logging has no performance impact.",
+        "details": "Preventing sensitive data from being logged does not affect application performance."
+      },
+      {
+        "id": "518-B",
+        "impactLevel": "Moderate",
+        "description": "Using data redaction techniques may add slight processing overhead.",
+        "details": "Implementing redaction libraries or tokenization mechanisms can introduce additional CPU and memory usage."
+      }
+    ]
+  },
+  {
+    "id": "519",
+    "type": "INSUFFICIENT_LOGGING_AND_MONITORING",
+    "recommendations": [
+      "Log all administrative actions, including user creation, deletion, and role changes.",
+      "Include timestamp, user ID, and action details in audit logs."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "519-A",
+        "impactLevel": "Low",
+        "description": "Logging administrative actions has minimal performance impact.",
+        "details": "Recording audit logs only for critical actions ensures security while keeping performance overhead low."
+      },
+      {
+        "id": "519-B",
+        "impactLevel": "Moderate",
+        "description": "Storing detailed audit logs increases storage requirements.",
+        "details": "High-volume applications with frequent administrative changes may require log rotation and efficient log management to prevent excessive storage usage."
+      }
+    ]
+  },
+  {
+    "id": "601",
+    "type": "SECURITY_MISCONFIGURATION",
+    "recommendations": [
+      "Ensure that critical HTTP security headers are configured using Spring Security's HttpSecurity.headers() method.",
+      "Add the X-Frame-Options header to prevent clickjacking attacks.",
+      "Add the X-Content-Type-Options header to prevent MIME sniffing.",
+      "Add the Strict-Transport-Security (HSTS) header to enforce HTTPS communication and prevent protocol downgrade attacks.",
+      "Define a Content-Security-Policy (CSP) header to mitigate XSS and data injection attacks.",
+      "Review and test all headers to ensure they are correctly configured and applied to all responses."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "601-A",
+        "impactLevel": "Low",
+        "description": "Adding security headers has minimal performance impact.",
+        "details": "Headers are processed at the HTTP response level and do not introduce measurable latency."
+      },
+      {
+        "id": "601-B",
+        "impactLevel": "Moderate",
+        "description": "Enforcing CSP can impact site functionality if not properly configured.",
+        "details": "Strict Content-Security-Policy (CSP) settings may require updates to JavaScript and resource loading behaviors."
+      }
+    ]
+  },
+  {
+    "id": "602",
+    "type": "SECURITY_MISCONFIGURATION",
+    "recommendations": [
+      "Enforce HTTPS by configuring HttpSecurity.requiresChannel().anyRequest().requiresSecure() in your Spring Security configuration.",
+      "Ensure that your web server (e.g., Apache, Nginx, or Tomcat) is configured to redirect all HTTP traffic to HTTPS.",
+      "Enable Strict-Transport-Security (HSTS) headers to enforce HTTPS on supported browsers.",
+      "Test the application to verify that all endpoints are accessible only via HTTPS and reject HTTP requests.",
+      "Review deployment environments to ensure SSL/TLS certificates are properly installed and maintained."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "602-A",
+        "impactLevel": "Low",
+        "description": "Enabling HTTPS has minimal impact with modern TLS implementations.",
+        "details": "TLS 1.3 optimizations ensure negligible latency overhead while enhancing security."
+      },
+      {
+        "id": "602-B",
+        "impactLevel": "Moderate",
+        "description": "Initial HTTPS handshake may introduce slight latency.",
+        "details": "The first request to a secure endpoint may experience minimal delay due to SSL/TLS handshake, but persistent connections mitigate this."
+      }
+    ]
+  },
+  {
+    "id": "603",
+    "type": "SECURITY_MISCONFIGURATION",
+    "recommendations": [
+      "Replace hardcoded credentials with environment variables or secure secrets management tools.",
+      "Use placeholders like ${DB_USERNAME} or ${DB_PASSWORD} to load credentials dynamically from external sources.",
+      "Store sensitive credentials in secure secret management systems like AWS Secrets Manager, HashiCorp Vault, or Azure Key Vault.",
+      "Ensure properties files are not included in version control repositories to prevent accidental leaks.",
+      "Regularly audit configuration files to identify and remove hardcoded credentials.",
+      "Test the application for configuration vulnerabilities using security tools and automated scripts."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "603-A",
+        "impactLevel": "Low",
+        "description": "Using environment variables has no significant performance impact.",
+        "details": "Credentials are loaded at runtime with negligible processing overhead."
+      },
+      {
+        "id": "603-B",
+        "impactLevel": "Moderate",
+        "description": "Using cloud-based secrets management may introduce slight latency.",
+        "details": "Fetching secrets dynamically from services like AWS Secrets Manager or HashiCorp Vault can add minor overhead to application startup."
+      }
+    ]
+  },
+  {
+    "id": "701",
+    "type": "SENSITIVE_DATA_EXPOSURE",
+    "recommendations": [
+      "Never log sensitive information such as passwords, API keys, or tokens.",
+      "Mask or redact sensitive data before logging, ensuring no sensitive values are stored in logs.",
+      "Review all logging statements in the codebase to ensure sensitive data is not logged.",
+      "Implement centralized log management with access control to restrict who can view logs.",
+      "Regularly audit application logs for any potential exposure of sensitive information.",
+      "Enable sensitive data detection tools in your logging or observability systems to flag potential issues."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "701-A",
+        "impactLevel": "Low",
+        "description": "Redacting sensitive data in logs has minimal performance impact.",
+        "details": "Using logging frameworks with built-in redaction or masking does not introduce significant latency."
+      },
+      {
+        "id": "701-B",
+        "impactLevel": "Moderate",
+        "description": "Centralized log management can add minor overhead.",
+        "details": "Processing and storing logs in a secure, centralized system may slightly increase storage and processing costs."
+      }
+    ]
+  },
+  {
+    "id": "702",
+    "type": "SENSITIVE_DATA_EXPOSURE",
+    "recommendations": [
+      "Avoid hardcoding sensitive information directly in the codebase.",
+      "Use environment variables or secure secrets management tools to manage sensitive data.",
+      "Replace hardcoded sensitive information with dynamically loaded values using secure configurations.",
+      "Regularly review the codebase for any instances of hardcoded sensitive information.",
+      "Implement code scanning tools in CI/CD pipelines to detect hardcoded credentials automatically.",
+      "Ensure access to secrets management tools is limited to authorized users and systems."
+    ],
+    "performanceImpactOptions": [
+      {
+        "id": "702-A",
+        "impactLevel": "Low",
+        "description": "Using environment variables has no significant performance impact.",
+        "details": "Loading secrets from environment variables at runtime is efficient and has negligible overhead."
+      },
+      {
+        "id": "702-B",
+        "impactLevel": "Moderate",
+        "description": "Fetching secrets from an external secrets management tool may introduce slight latency.",
+        "details": "Using AWS Secrets Manager, HashiCorp Vault, or similar services may add minor startup delay, but improves security."
+      }
+    ]
+  }
+]

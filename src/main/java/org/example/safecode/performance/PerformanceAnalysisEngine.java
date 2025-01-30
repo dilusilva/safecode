@@ -2,37 +2,19 @@ package org.example.safecode.performance;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.safecode.models.ScanResult;
+import org.example.safecode.utils.PerformanceImpactsLoader;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class PerformanceAnalysisEngine {
-    public void analyzePerformance(List<ScanResult> results) {
+
+    public List<ScanResult>  analyzePerformance(List<ScanResult> results) {
+        Map<String, PerformanceImpactsWrapper> impactMap = new PerformanceImpactsLoader().getAllPerformanceImpacts();
         for (ScanResult result : results) {
-//            result.setPerformanceImpact(analyzeImpact(result.getRecommendations()));
+            result.setPerformanceImpact(impactMap.get(result.getVulnerabilityDefinition().getId()).getPerformanceImpactOptions());
         }
-    }
-
-    private PerformanceImpact analyzeImpact(List<String> recommendations) {
-        log.info("in analyse impact");
-        int impactScore = 0;
-        for (String recommendation : recommendations) {
-            if (recommendation.contains("Enable TLS") || recommendation.contains("Use AES-256")) {
-                impactScore += 2; // High impact
-            } else if (recommendation.contains("Validate inputs")) {
-                impactScore += 1; // Moderate impact
-            }
-        }
-        return new PerformanceImpact(impactScore, determineImpactLevel(impactScore));
-    }
-
-    private String determineImpactLevel(int score) {
-        if (score >= 5) {
-            return "High";
-        } else if (score >= 3) {
-            return "Moderate";
-        } else {
-            return "Low";
-        }
+        return results;
     }
 }

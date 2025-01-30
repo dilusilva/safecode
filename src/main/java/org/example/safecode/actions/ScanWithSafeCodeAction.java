@@ -10,6 +10,8 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import lombok.extern.slf4j.Slf4j;
+import org.example.safecode.actions.utils.DisplayResultsUtil;
+import org.example.safecode.actions.utils.FileScannerUtil;
 import org.example.safecode.detection.VulnerabilityDetectionEngine;
 import org.example.safecode.models.ScanResult;
 import org.example.safecode.performance.PerformanceAnalysisEngine;
@@ -34,7 +36,7 @@ public class ScanWithSafeCodeAction extends AnAction {
         // Step 1: Extract permitAll URLs from security configuration files
         extractPermitAllUrls(project);
 
-        List<VirtualFile> javaFiles = getFilesToScan(e, project);
+        List<VirtualFile> javaFiles = FileScannerUtil.getFilesToScan(e, project);
         if (javaFiles == null) {
             log.warn("No Java files found to scan.");
             return;
@@ -46,21 +48,32 @@ public class ScanWithSafeCodeAction extends AnAction {
             return;
         }
 
-        // Generate recommendations
-//        RecommendationEngine recommendationEngine = new RecommendationEngine();
-//        for (List<ScanResult> fileResults : resultsByFile.values()) {
-//            recommendationEngine.generateRecommendations(fileResults);
-//        }
+//        // Generate recommendations
+        generateRecommendations(resultsByFile);
 
         // Analyze performance impact
-        PerformanceAnalysisEngine performanceAnalysisEngine = new PerformanceAnalysisEngine();
-        for (List<ScanResult> fileResults : resultsByFile.values()) {
-            performanceAnalysisEngine.analyzePerformance(fileResults);
-        }
-
+        anlysePerformanceImpacts(resultsByFile);
         // Display final results
-        displayResults(project, resultsByFile);
+        DisplayResultsUtil.displayResults(project, resultsByFile);
         log.info("Scan with SafeCode completed for project: {}", project.getName());
+    }
+
+    private static void anlysePerformanceImpacts(Map<String, List<ScanResult>> resultsByFile) {
+        PerformanceAnalysisEngine performanceAnalysisEngine = new PerformanceAnalysisEngine();
+        for (Map.Entry<String, List<ScanResult>> entry : resultsByFile.entrySet()) {
+            List<ScanResult> fileResults = entry.getValue();
+            List<ScanResult> scanResults = performanceAnalysisEngine.analyzePerformance(fileResults);
+            entry.setValue(scanResults);
+        }
+    }
+
+    private static void generateRecommendations(Map<String, List<ScanResult>> resultsByFile) {
+        RecommendationEngine recommendationEngine = new RecommendationEngine();
+        for (Map.Entry<String, List<ScanResult>> entry : resultsByFile.entrySet()) {
+            List<ScanResult> fileResults = entry.getValue();
+            List<ScanResult> scanResults = recommendationEngine.generateRecommendations(fileResults);
+            entry.setValue(scanResults);
+        }
     }
 
     private Map<String, List<ScanResult>> performScan(Project project, List<VirtualFile> javaFiles) {
@@ -87,66 +100,8 @@ public class ScanWithSafeCodeAction extends AnAction {
         return resultsByFile;
     }
 
-    private @Nullable List<VirtualFile> getFilesToScan(@NotNull AnActionEvent e, Project project) {
-        if (project == null) {
-            log.error("Project is null.");
-            return null;
-        }
 
-        // Check if a specific file or the entire project should be scanned
-        VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
 
-        List<VirtualFile> javaFiles = new ArrayList<>();
-        if (virtualFile != null && virtualFile.isDirectory()) {
-            // If a directory is selected, collect all Java files in the directory
-            log.info("Collecting Java files from directory: {}", virtualFile.getPath());
-            collectJavaFiles(virtualFile, javaFiles);
-        } else if (virtualFile != null && "java".equals(virtualFile.getExtension())) {
-            // If a single Java file is selected, add it to the list
-            log.info("Adding single Java file to scan: {}", virtualFile.getPath());
-            javaFiles.add(virtualFile);
-        } else {
-            // If no file is selected, collect all Java files in the project
-            VirtualFile projectDir = project.getBaseDir();
-            if (projectDir != null) {
-                log.info("Collecting all Java files in the project directory: {}", projectDir.getPath());
-                collectJavaFiles(projectDir, javaFiles);
-            }
-        }
-
-        if (javaFiles.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "No Java files found in the selected location.", "Info", JOptionPane.INFORMATION_MESSAGE);
-            return null;
-        }
-        return javaFiles;
-    }
-
-    private static void displayResults(Project project, Map<String, List<ScanResult>> resultsByFile) {
-        // Display the scan results grouped by file in the SafeCode plugin tool window
-        ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("SafeCode Plugin Results");
-        if (toolWindow != null) {
-            PluginToolWindow pluginToolWindow = PluginToolWindow.getInstance();
-            if (pluginToolWindow != null) {
-                pluginToolWindow.setScanResults(resultsByFile);
-                if (!toolWindow.isVisible()) {
-                    toolWindow.activate(null); // Automatically open the tool window
-                }
-                log.info("Displaying scan results in SafeCode plugin tool window.");
-            }
-        }
-    }
-
-    // Utility method to collect all Java files in a directory recursively
-    private void collectJavaFiles(VirtualFile directory, List<VirtualFile> javaFiles) {
-        for (VirtualFile file : directory.getChildren()) {
-            if (file.isDirectory()) {
-                collectJavaFiles(file, javaFiles);
-            } else if ("java".equals(file.getExtension())) {
-                javaFiles.add(file);
-            }
-        }
-    }
 
     /**
      * Extracts all permitAll URLs from the project's Spring Security configuration files.
